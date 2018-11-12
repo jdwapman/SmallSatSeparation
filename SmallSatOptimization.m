@@ -1,14 +1,5 @@
 %% Small Satellite Optimization
-%
-% This project 1) replicates and 2) extends the work performed in Sin's
-% paper with the goal of determining whether nonlinear programming delivers
-% significant performance improvements compared to the linear programming
-% performed in the reference work. 
-%
-% E. Sin, M. Arcak, and A. Packard, “Small Satellite Constellation
-% Separation using Linear Programming based Differential Drag Commands,”
-% arXiv:1710.00104 [cs], Sep. 2017.
-
+% Project Description
 
 %% Initialization Steps
 clc
@@ -85,9 +76,6 @@ global epsOmega;
 epsOmega = 1e-18;  % (rad/sec)
 
 %% Recreate using linear programming
-
-% Atmospheric density model:
-% http://jat.sourceforge.net/javadoc/jat/coreNOSA/forces/HarrisPriester.html#computeDensity(jat.coreNOSA.timeRef.EarthRef,%20jat.coreNOSA.math.MatrixVector.data.VectorN)
 
 % Creates D matrix used for satellite spacing
 global D;
