@@ -87,8 +87,14 @@ epsOmega = 1e-18;  % (rad/sec)
 %% Recreate using linear programming
 
 % Creates D matrix used for satellite spacing
+global D;
 D = eye(N,N);
 D = D - diag(ones(N-1,1),1);
 D(N,1) = -1;
+
+% Creates delta_des
+global delta_des;
+delta_des = repmat(2*pi/N, N, 1);
+delta_des(end) = -2*pi/N*(N-1);
 
 %% Recreate using nonlinear optimization
