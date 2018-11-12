@@ -38,9 +38,9 @@ Amax = 0.225;  % (m^2)
 global m;
 m = 4.9;  % (kg)
 
-% Velocity of satellite relative to the atmosphere
-global vrel;
-vrel = 0;  % (m/sec)
+% Angular velocity of the earth
+global we;
+we = 0;  % (rad/sec)
 
 % Atmospheric density at the satellite position 
 global rho;
@@ -85,6 +85,9 @@ global epsOmega;
 epsOmega = 1e-18;  % (rad/sec)
 
 %% Recreate using linear programming
+
+% Atmospheric density model:
+% http://jat.sourceforge.net/javadoc/jat/coreNOSA/forces/HarrisPriester.html#computeDensity(jat.coreNOSA.timeRef.EarthRef,%20jat.coreNOSA.math.MatrixVector.data.VectorN)
 
 % Creates D matrix used for satellite spacing
 global D;
