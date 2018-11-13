@@ -33,9 +33,8 @@ m = 4.9;  % (kg)
 global we;
 we = 0;  % (rad/sec)
 
-% Atmospheric density at the satellite position 
+% Atmospheric density at the satellite position. TODO: Get Montenbruck book
 global rho;
-rho = 2.5e-12;  % (kg/m^3)
 
 %% Simulation Parameters
 
