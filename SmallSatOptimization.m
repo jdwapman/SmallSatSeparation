@@ -86,6 +86,6 @@ D(N,1) = -1;
 % Creates delta_des
 global delta_des;
 delta_des = repmat(2*pi/N, N, 1);
-delta_des(end) = -2*pi/N*(N-1);
+delta_des(end) = -2*pi/N*(N-1);  % Replace last value
 
 %% Recreate using nonlinear optimization
