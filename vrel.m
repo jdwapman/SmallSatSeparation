@@ -16,7 +16,7 @@ function [result] = vrel(r,w)
 %               180 deg: Retrograde equitorial
 
 
-result = r.*(w-we*cos(phi))
+result = r.*(w-we*cos(phi));
 
 end
 
