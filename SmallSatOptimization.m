@@ -29,9 +29,9 @@ Amax = 0.225;  % (m^2)
 global m;
 m = 4.9;  % (kg)
 
-% Angular velocity of the earth
+% Angular velocity of the earth TODO: Get value
 global we;
-we = 0;  % (rad/sec)
+we = 1;  % (rad/sec)
 
 % Atmospheric density at the satellite position. TODO: Get Montenbruck book
 global rho;
