@@ -22,7 +22,7 @@ function [result] = Sr(r,w)
 % 
 %     Inputs:
 %         r: Satellite altitude [N x 1] (m)
-%         w: Satellite angular velocity [N x 1] (rad/sed)
+%         w: Satellite angular velocity [N x 1] (rad/sec)
 %     Outputs:
 %         result: Sr term
 %     Globals:
