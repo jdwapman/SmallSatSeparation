@@ -5,7 +5,7 @@
 clc
 clear
 
-%% Set Up Constants
+%% Set Up Physical Constants
 
 % Note, must use global variables so they are available to the functions in
 % the nonlinear constraints. Keeping these variables in memory is faster
@@ -90,8 +90,6 @@ D(N,1) = -1;
 global delta_des;
 delta_des = repmat(2*pi/N, N, 1);
 delta_des(end) = -2*pi/N*(N-1);  % Replace last value
-
-nextState(1,1,1,1)
 
 %% Recreate using nonlinear optimization
 
