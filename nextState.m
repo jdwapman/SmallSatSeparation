@@ -15,6 +15,8 @@ function [rNext, wNext, thetaNext] = nextState(r, w, theta, u)
 %     Globals:
 %         dt: Time step between u inputs [1 x 1] (sec)
 
+global dt; % Note: Need to declare globals in the function they're used in
+
 rNext = r + dt.*Sr(r, w).*u;
 wNext = w + dt.*Somega(r,w).*u;
 thetaNext = theta + dt.*w + 1/2*dt^2.*Somega(r,w).*u;

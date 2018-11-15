@@ -36,6 +36,10 @@ we = 1;  % (rad/sec)
 % Atmospheric density at the satellite position. TODO: Get Montenbruck book
 global rho;
 
+% Inclination of orbit
+global phi;
+phi = deg2rad(90);  % 90 degrees for near-polar orbit
+
 %% Simulation Parameters
 
 % Number of satellites in the simulation
@@ -86,6 +90,8 @@ D(N,1) = -1;
 global delta_des;
 delta_des = repmat(2*pi/N, N, 1);
 delta_des(end) = -2*pi/N*(N-1);  % Replace last value
+
+nextState(1,1,1,1)
 
 %% Recreate using nonlinear optimization
 

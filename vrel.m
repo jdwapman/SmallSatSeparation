@@ -15,6 +15,9 @@ function [result] = vrel(r,w)
 %               0 deg: equitorial
 %               180 deg: Retrograde equitorial
 
+% Need to declare needed globals within the function
+global we
+global phi
 
 result = r.*(w-we*cos(phi));
 

@@ -30,6 +30,10 @@ function [result] = Somega(r,w)
 %         m: Satellite mass [N x 1] or [1 x 1] (kg)
 %         ue: Earth's gravitational constant (m^3s^-2)
 
+global Cd
+global m
+global ue
+
 result = 3/2.*Cd./m.*rho(r).*abs(vrel(r,w)).^2./r;
 
 end
