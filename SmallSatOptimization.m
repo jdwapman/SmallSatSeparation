@@ -29,9 +29,9 @@ Amax = 0.225;  % (m^2)
 global m;
 m = 4.9;  % (kg)
 
-% Angular velocity of the earth TODO: Get value
+% Angular velocity of the earth. (Wikipedia)
 global we;
-we = 1;  % (rad/sec)
+we = 7.2921150e-5;  % (rad/sec)
 
 % Atmospheric density at the satellite position. TODO: Get Montenbruck book
 global rho;
