@@ -40,9 +40,6 @@ m = 4.9;  % (kg)
 global we;
 we = 7.2921150e-5;  % (rad/sec)
 
-% Atmospheric density at the satellite position. TODO: Get Montenbruck book
-global rho;
-
 % Inclination of orbit
 global phi;
 phi = deg2rad(90);  % 90 degrees for near-polar orbit
