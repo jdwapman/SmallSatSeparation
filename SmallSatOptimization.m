@@ -45,6 +45,7 @@ global phi;
 phi = deg2rad(90);  % 90 degrees for near-polar orbit
 
 %% Simulation Parameters
+% Specified in Sin et al. paper
 
 % Number of satellites in the simulation
 global N;
