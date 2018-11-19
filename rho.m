@@ -14,6 +14,8 @@ function [density] = rho(r)
 %   Outputs:
 %       density: atmospheric density at the given height [N x 1] (unknown)
 
+
+% TODO: Get actual equation
 density = ones(size(r));
 
 end
