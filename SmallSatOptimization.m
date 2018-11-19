@@ -85,7 +85,7 @@ epsTheta = 0.1;  % (rad)
 global epsOmega;
 epsOmega = 1e-18;  % (rad/sec)
 
-%% Recreate using linear programming
+%% Variables for both programming methods
 
 % Creates D matrix used for satellite spacing
 global D;
@@ -98,5 +98,8 @@ global delta_des;
 delta_des = repmat(2*pi/N, N, 1);
 delta_des(end) = -2*pi/N*(N-1);  % Replace last value
 
-%% Recreate using nonlinear optimization
+%% Recreate using linear programming
+OptimizeLinear()
 
+%% Recreate using nonlinear optimization
+OptimizeNonlinear()
