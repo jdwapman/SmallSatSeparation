@@ -1,6 +1,22 @@
 function [r, w, theta] = trajectory(u)
-%UNTITLED Summary of this function goes here
-%   Detailed explanation goes here
+%trajectory Computes the trajectory of the satellites over time
+%   Computes the trajectory of the N satellites over time given the inputs
+%   u.
+% 
+%     Inputs:
+%         u: Vector of satellite area commands [N x T] (m^2)
+%     Outputs:
+%         r: Matrix of satellite altitudes [N x T] (m)
+%         w: Matrix of satellite angular velocities [N x T] (rad/sec)
+%         theta: Matrix of satellite angular positions [N x T] (rad)
+%     globals:
+%         N: Number of satellites [1 x 1]
+%         T: Number of time steps [1 x 1]
+%         r0: Initial radius of the satellites [N x 1] (m)
+%         w0: Initial angular velocity of the satellites [N x 1] (rad/sec)
+%         theta0: Initial angular position of the satellites [N x 1] (rad)
+%         dt: Elapsed time between input commands/calculations [1 x 1] (sec)
+
 
 % Import global variables
 global N; % Number of satellites
