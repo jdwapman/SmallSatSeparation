@@ -141,7 +141,7 @@ b = [r0; ...
 
 % Create cost function
 f = [zeros(1,N*T), 1];
-x0 = [repmat(Amin, N*T, 1); 100e3];
+x0 = [repmat(Amin, N*T, 1); -100e3];
 
 costfun = @(x)f*x;
 
@@ -151,7 +151,7 @@ beq = [];
 lb = [];
 ub = [];
 nonlcon = [];
-options = optimoptions('fmincon', 'Display', 'iter', 'MaxFunctionEvaluations', 1e5);
+options = optimoptions('fmincon', 'Display', 'iter', 'MaxFunctionEvaluations', 100*N*T, 'UseParallel', true);
 result = fmincon(costfun, x0, A, b, Aeq, beq, lb, ub, nonlcon, options);
 
 % Plot reference trajectories
