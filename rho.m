@@ -12,25 +12,25 @@ function [density] = rho(r)
 %   Inputs:
 %       r: Satellite altitude [N x 1] (m)
 %   Outputs:
-%       density: atmospheric density at the given height [N x 1] (g/m^3)
+%       density: atmospheric density at the given height [N x 1] (kg/m^3)
 
 % Variables are persistent so they don't have to be reloaded each time the
 % function is called
 persistent h  % (m)
-persistent rhoMin  % (g/m^3)
-persistent rhoMax  % (g/m^3)
+persistent rhoMin  % (kg/m^3)
+persistent rhoMax  % (kg/m^3)
 
 % Check if density data has already been allocated
 if isempty(h)
     densityData = xlsread("AtmosphericDensity.xlsx");
     h = densityData(:,1);  % (km)
-    rhoMin = densityData(:,2);  % (g/km^3)
-    rhoMax = densityData(:,3);  % (g/km^3)
+    rhoMin = densityData(:,2);  % (kg/km^3)
+    rhoMax = densityData(:,3);  % (kg/km^3)
     
     % Convert units
     h = h .* 1000;  % (m)
-    rhoMin = rhoMin ./ (1000^3);  % (g/m^3)
-    rhoMax = rhoMax ./ (1000^3);  % (g/m^3)  
+    rhoMin = rhoMin ./ (1000^3);  % (kg/m^3)
+    rhoMax = rhoMax ./ (1000^3);  % (kg/m^3)  
 end
 
 % Error checking

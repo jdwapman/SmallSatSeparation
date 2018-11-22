@@ -45,17 +45,16 @@ global phi;
 phi = deg2rad(90);  % 90 degrees for near-polar orbit
 
 
-
 %% Simulation Parameters
 % Specified in Sin et al. paper
 
 % Number of satellites in the simulation
 global N;
-N = 105;
+N = 1 % 105;
 
 % Number of time steps/input commands
 global T;
-T = 71;  % (Days)
+T = 100;  % (Days)
 
 % Initial position
 global theta0;
@@ -70,7 +69,7 @@ r0(:) = 475000;   % (m)
 % Initial velocity
 global w0;
 w0 = zeros(N,1);
-w0(:) = sqrt(ue./r0.^3);
+w0(:) = sqrt(ue./(r0.^3));
 
 % Update time
 global dt;
@@ -99,7 +98,11 @@ delta_des = repmat(2*pi/N, N, 1);
 delta_des(end) = -2*pi/N*(N-1);  % Replace last value
 
 %% Recreate using linear programming
-OptimizeLinear()
+% OptimizeLinear()
+
+u = repmat(Amin, N, T);
+[r, w, theta] = trajectory(u);
+plot(theta)
 
 %% Recreate using nonlinear optimization
 OptimizeNonlinear()
