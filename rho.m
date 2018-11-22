@@ -45,7 +45,7 @@ end
 % Preallocate
 density = zeros(size(r));
 
-
+% Compute densities
 for rIdx = 1:numel(r)
     % 1) Find lower index
     deltas = r(rIdx)-h; % Differences between radius and tabulated heights
