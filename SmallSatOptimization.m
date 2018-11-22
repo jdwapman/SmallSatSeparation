@@ -44,6 +44,8 @@ we = 7.2921150e-5;  % (rad/sec)
 global phi;
 phi = deg2rad(90);  % 90 degrees for near-polar orbit
 
+
+
 %% Simulation Parameters
 % Specified in Sin et al. paper
 

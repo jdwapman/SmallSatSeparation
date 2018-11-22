@@ -14,9 +14,52 @@ function [density] = rho(r)
 %   Outputs:
 %       density: atmospheric density at the given height [N x 1] (unknown)
 
+% Variables are persistent so they don't have to be reloaded each time the
+% function is called
+persistent h  % (m)
+persistent rhoMin  % (g/m^3)
+persistent rhoMax  % (g/m^3)
 
-% TODO: Get actual equation
-density = ones(size(r));
-
+% Check if density data has already been allocated
+if isempty(h)
+    densityData = xlsread("AtmosphericDensity.xlsx");
+    h = densityData(:,1);  % (km)
+    rhoMin = densityData(:,2);  % (g/km^3)
+    rhoMax = densityData(:,3);  % (g/km^3)
+    
+    % Convert units
+    h = h .* 1000;  % (m)
+    rhoMin = rhoMin ./ (1000^3);  % (g/m^3)
+    rhoMax = rhoMax ./ (1000^3);  % (g/m^3)  
 end
 
+% Error checking
+if any(r < min(h))
+    error("Altitude is below minimum value of 100 km")
+end
+
+if any(r > max(h))
+   error("Altitude is above maximum value of 1000 km") 
+end
+
+% Preallocate
+density = zeros(size(r));
+
+
+for rIdx = 1:numel(r)
+    % 1) Find lower index
+    deltas = r(rIdx)-h; % Differences between radius and tabulated heights
+    posDeltasIdx = deltas >= 0; % Use > 0 to get lower bound
+    [hi, i] = min(deltas(posDeltasIdx)); % Find the smallest difference
+
+    % 2) Calulate scale heights
+    Hm = (h(i)-h(i+1)) ./ ( log(rhoMin(i+1)/rhoMin(i)) );
+    HM = (h(i)-h(i+1)) ./ ( log(rhoMax(i+1)/rhoMax(i)) );
+    
+    % 3) Calculate minimum and maximum densities
+    densityMin = rhoMin(i)*exp((h(i)-r(rIdx))/Hm);
+    densityMax = rhoMax(i)*exp((h(i)-r(rIdx))/HM);
+    
+    % Compute the density. Ignore diurnal effects.
+    density(rIdx) = densityMin;
+end
