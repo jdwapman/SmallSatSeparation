@@ -23,23 +23,23 @@ persistent rhoMax  % (kg/m^3)
 % Check if density data has already been allocated
 if isempty(h)
     densityData = xlsread("AtmosphericDensity.xlsx");
-    h = densityData(:,1);  % (km)
-    rhoMin = densityData(:,2);  % (kg/km^3)
-    rhoMax = densityData(:,3);  % (kg/km^3)
+    hExcel = densityData(:,1);  % (km)
+    rhoMinExcel = densityData(:,2);  % (g/km^3)
+    rhoMaxExcel = densityData(:,3);  % (g/km^3)
     
     % Convert units
-    h = h .* 1000;  % (m)
-    rhoMin = rhoMin ./ (1000^3);  % (kg/m^3)
-    rhoMax = rhoMax ./ (1000^3);  % (kg/m^3)  
+    h = hExcel .* 1000;  % (m)
+    rhoMin = rhoMinExcel ./ (1000^3) ./ 1000;  % (kg/m^3)
+    rhoMax = rhoMaxExcel ./ (1000^3) ./ 1000;  % (kg/m^3)  
 end
 
 % Error checking
-if any(r < min(h))
-    error("Altitude is below minimum value of 100 km")
+if any(r < 100e3) % 100 km
+    warning("Altitude is below minimum value of 100 km")
 end
 
-if any(r > max(h))
-   error("Altitude is above maximum value of 1000 km") 
+if any(r > 1000e3) % 1000 km
+   warning("Altitude is above maximum value of 1000 km") 
 end
 
 % Preallocate
