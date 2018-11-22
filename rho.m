@@ -61,5 +61,5 @@ for rIdx = 1:numel(r)
     densityMax = rhoMax(i)*exp((h(i)-r(rIdx))/HM);
     
     % 4) Return the density. Ignore diurnal effects.
-    density(rIdx) = densityMin;
+    density(rIdx) = densityMax;
 end

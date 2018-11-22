@@ -50,11 +50,11 @@ phi = deg2rad(90);  % 90 degrees for near-polar orbit
 
 % Number of satellites in the simulation
 global N;
-N = 20;
+N = 12;
 
 % Number of time steps/input commands
 global T;
-T = 40;  % (Days)
+T = 10;  % (Days)
 
 % Initial position
 global theta0;
@@ -145,7 +145,7 @@ x0 = [repmat(Amin, N*T, 1); -100e3];
 
 costfun = @(x)f*x;
 
-% Optimize
+%% Optimize
 Aeq = [];
 beq = [];
 lb = -Inf;
@@ -158,6 +158,7 @@ U = result(1:end-1);
 thresh = result(end);
 
 U = reshape(U, N, T);
+%% Plot
 
 % Find actual trajectory and final states
 [rAct, wAct, thetaAct] = trajectory(U);
@@ -166,51 +167,16 @@ rActT = rAct(:,end);
 wActT = wAct(:,end);
 thetaActT = thetaAct(:,end);
 figure
-title("Actual Final State")
 polarplot(thetaActT, rActT, '.-')
+title("Actual Final State")
 
 % Find the linearized final state
 figure
+rLinT = r0+dt*Sr_ref*result(1:end-1);
+wLinT = w0+dt*Somega_ref*result(1:end-1);
+thetaLinT = theta0+dt*T*w0+dt^2*Salpha_ref*result(1:end-1);
+polarplot(thetaLinT, rLinT)
 title("Linearized Final State")
-rSimpT = r0+dt*Sr_ref*result(1:end-1);
-wSimpT = w0+dt*Somega_ref*result(1:end-1);
-thetaSimpT = theta0+dt*T*w0+dt^2*Salpha_ref*result(1:end-1);
-polarplot(thetaSimpT, rSimpT)
-
-
-% Plot trajectories
-% t = 1:1:T;
-% figure
-% plot(t,r/1000)
-% xlabel("Time (Days)")
-% ylabel("Altitude (km)")
-% title("Altitude vs Time")
-% 
-% figure
-% plot(t, rad2deg(w))
-% xlabel("Time (Days)")
-% ylabel("Angular Velocity (deg)")
-% title(" Angular Velocity vs Time")
-
-% t = 100
-% thetaPlot = theta(:,end);
-% rPlot = r(:,end);
-% polarplot(thetaPlot, rPlot, '.-')
-
-% Plot reference trajectories
-% t = 1:1:T;
-% figure
-% plot(t,rRef/1000)
-% xlabel("Time (Days)")
-% ylabel("Altitude (km)")
-% title("Altitude vs Time")
-% 
-% figure
-% plot(t, rad2deg(wRef))
-% xlabel("Time (Days)")
-% ylabel("Angular Velocity (deg)")
-% title(" Angular Velocity vs Time")
-
 
 %% Recreate using nonlinear optimization
 OptimizeNonlinear()
