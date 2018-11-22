@@ -12,7 +12,7 @@ function [density] = rho(r)
 %   Inputs:
 %       r: Satellite altitude [N x 1] (m)
 %   Outputs:
-%       density: atmospheric density at the given height [N x 1] (unknown)
+%       density: atmospheric density at the given height [N x 1] (g/m^3)
 
 % Variables are persistent so they don't have to be reloaded each time the
 % function is called
