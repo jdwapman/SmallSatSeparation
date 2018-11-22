@@ -98,11 +98,28 @@ delta_des = repmat(2*pi/N, N, 1);
 delta_des(end) = -2*pi/N*(N-1);  % Replace last value
 
 %% Recreate using linear programming
+
 % OptimizeLinear()
 
+% 1) Precompute reference trajectory
 u = repmat(Amin, N, T);
-[r, w, theta] = trajectory(u);
-plot(theta)
+[rRef, wRef, thetaRef] = trajectory(u);
+
+
+% Plot reference trajectories
+t = 1:1:T;
+figure
+plot(t,rRef/1000)
+xlabel("Time (Days)")
+ylabel("Altitude (km)")
+title("Altitude vs Time")
+
+figure
+plot(t, rad2deg(wRef))
+xlabel("Time (Days)")
+ylabel("Angular Velocity (deg)")
+title(" Angular Velocity vs Time")
+
 
 %% Recreate using nonlinear optimization
 OptimizeNonlinear()
