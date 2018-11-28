@@ -40,7 +40,7 @@ m = 4.9;  % (kg)
 global we;
 we = 7.2921150e-5;  % (rad/sec)
 
-% Inclination of orbit
+% Inclination of orbit.  (Sin)
 global phi;
 phi = deg2rad(90);  % 90 degrees for near-polar orbit
 
@@ -50,11 +50,11 @@ phi = deg2rad(90);  % 90 degrees for near-polar orbit
 
 % Number of satellites in the simulation
 global N;
-N = 12;
+N = 50;
 
 % Number of time steps/input commands
 global T;
-T = 10;  % (Days)
+T = 30;  % (Days)
 
 % Initial position
 global theta0;
@@ -69,12 +69,12 @@ r0(:) = 475000;   % (m)
 % Initial velocity
 global w0;
 w0 = zeros(N,1);
-w0(:) = sqrt(ue./(r0.^3));
+w0(:) = sqrt(ue./(r0.^3));  % (rad/sec)
 
 % Update time
 global dt;
 dtDays = 1;
-dt = dtDays * 24 * 60 * 60;
+dt = dtDays * 24 * 60 * 60;  % (sec)
 
 % Position tolerance
 global epsTheta;
@@ -90,7 +90,7 @@ epsOmega = 1e-18;  % (rad/sec)
 global D;
 D = eye(N,N);
 D = D - diag(ones(N-1,1),1);
-D(N,1) = -1;
+D(N,1) = -1;  % Bottom-left corner
 
 % Creates delta_des
 global delta_des;
@@ -112,7 +112,7 @@ Salpha_ref = [];
 alpha = ((T-1/2)*ones(1,T) - (0:1:T-1));
 for n = 1:1:N
     Sr_i = Sr(rRef(n,:), wRef(n,:))';  % Must convert to row vector
-    Sr_ref = blkdiag(Sr_ref, Sr_i);
+    Sr_ref = blkdiag(Sr_ref, Sr_i);  % Append matrix to diagonal
     
     Somega_i = Somega(rRef(n,:), wRef(n,:))';  % Must convert to row vector
     Somega_ref = blkdiag(Somega_ref, Somega_i);
@@ -122,7 +122,7 @@ for n = 1:1:N
 end
 
 
-% 4) Create A matrix for linear programming
+% 3) Create  matrices for linear programming
 A = [-dt*Sr_ref, -ones(N,1); ...
     dt^2*D*Salpha_ref, zeros(N,1); ...
     -dt^2*D*Salpha_ref, zeros(N,1); ...
@@ -139,7 +139,7 @@ b = [r0; ...
     Amax * ones(N*T, 1); ...
     -Amin * ones(N*T, 1)];
 
-% Create cost function
+% 4) Create cost function
 f = [zeros(1,N*T), 1];
 x0 = [repmat(Amin, N*T, 1); -100e3];
 
@@ -151,14 +151,19 @@ beq = [];
 lb = -Inf;
 ub = Inf;
 nonlcon = [];
+
+% Perform optimization. NOTE: for final results, disable parallelization
 options = optimoptions('fmincon', 'Display', 'iter', 'MaxFunctionEvaluations', 100*N*T, 'UseParallel', true);
 result = fmincon(costfun, x0, A, b, Aeq, beq, lb, ub, nonlcon, options);
 
-U = result(1:end-1);
-thresh = result(end);
+U = result(1:end-1);  % Extract inputs
+thresh = result(end);  % Extract radius
 
 U = reshape(U, N, T);
-%% Plot
+
+rMax = -thresh;  % Determines maximized radius
+
+%% Plot Angles
 
 % Find actual trajectory and final states
 [rAct, wAct, thetaAct] = trajectory(U);
@@ -177,6 +182,28 @@ wLinT = w0+dt*Somega_ref*result(1:end-1);
 thetaLinT = theta0+dt*T*w0+dt^2*Salpha_ref*result(1:end-1);
 polarplot(thetaLinT, rLinT)
 title("Linearized Final State")
+
+%% Plot inputs
+
+figure
+t = 1:1:T;
+plot(t, U);
+xlabel("Time (Days)")
+ylabel("Area (m^2)")
+title("Satellite Area vs Time")
+
+%% Plot radius trajectory
+
+figure
+t = 1:1:T;
+plot(t, rAct/1000)
+xlabel("Time (Days)")
+ylabel("Altitude (km)")
+
+figure
+plot(t, wAct)
+xlabel("Time (Days)")
+ylabel("Angular Velocity (rad/sec)")
 
 %% Recreate using nonlinear optimization
 OptimizeNonlinear()
