@@ -69,7 +69,7 @@ r0(:) = 475000;   % (m)
 % Initial velocity
 global w0;
 w0 = zeros(N,1);
-w0(:) = sqrt(ue./(r0.^3));  % (rad/sec)
+w0(:) = sqrt(ue./(r0.^3));  % (rad/sec) TODO: Needs to be multiplied by 2pi? Current units are 1/sec
 
 % Update time
 global dt;
@@ -148,8 +148,8 @@ costfun = @(x)f*x;
 %% Optimize
 Aeq = [];
 beq = [];
-lb = -Inf;
-ub = Inf;
+lb = [];
+ub = [];
 nonlcon = [];
 
 % Perform optimization. NOTE: for final results, disable parallelization
@@ -162,6 +162,7 @@ thresh = result(end);  % Extract radius
 U = reshape(U, N, T);
 
 rMax = -thresh;  % Determines maximized radius
+assert(all(rMax < r0))  % Check that the radius is less than starting
 
 %% Plot Angles
 
