@@ -7,7 +7,7 @@ function [density] = rho(r)
 %   2005, ch. 3.
 %
 %   Inputs:
-%       r: Satellite altitude [N x 1] (m)
+%       r: Satellite orbital radius [N x 1] (m)
 %   Outputs:
 %       density: atmospheric density at the given height [N x 1] (kg/m^3)
 
@@ -16,6 +16,8 @@ function [density] = rho(r)
 persistent h  % (m)
 persistent rhoMin  % (kg/m^3)
 persistent rhoMax  % (kg/m^3)
+
+global re;  % Radius of the earth (m)
 
 % Check if density data has already been allocated
 if isempty(h)
@@ -30,22 +32,25 @@ if isempty(h)
     rhoMax = rhoMaxExcel ./ (1000^3) ./ 1000;  % (kg/m^3)  
 end
 
+altitude = r - re;
+
 % Error checking
-if any(r < 100e3) % 100 km
+if any(altitude < 100e3) % 100 km
     warning("Altitude is below minimum value of 100 km")
 end
 
-if any(r > 1000e3) % 1000 km
+if any(altitude > 1000e3) % 1000 km
    warning("Altitude is above maximum value of 1000 km") 
 end
 
+
 % Preallocate
-density = zeros(size(r));
+density = zeros(size(altitude));
 
 % Compute densities
-for rIdx = 1:numel(r)
+for rIdx = 1:numel(altitude)
     % 1) Find lower index
-    deltas = r(rIdx)-h; % Differences between radius and tabulated heights
+    deltas = altitude(rIdx)-h; % Differences between radius and tabulated heights
     posDeltasIdx = deltas >= 0; % Use > 0 to get lower bound
     [hi, i] = min(deltas(posDeltasIdx)); % Find the smallest difference
 
@@ -54,8 +59,8 @@ for rIdx = 1:numel(r)
     HM = (h(i)-h(i+1)) ./ ( log(rhoMax(i+1)/rhoMax(i)) );
     
     % 3) Calculate minimum and maximum densities
-    densityMin = rhoMin(i)*exp((h(i)-r(rIdx))/Hm);
-    densityMax = rhoMax(i)*exp((h(i)-r(rIdx))/HM);
+    densityMin = rhoMin(i)*exp((h(i)-altitude(rIdx))/Hm);
+    densityMax = rhoMax(i)*exp((h(i)-altitude(rIdx))/HM);
     
     % 4) Return the density. Ignore diurnal effects.
     density(rIdx) = densityMax;

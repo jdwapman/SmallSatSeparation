@@ -4,7 +4,7 @@ function [result] = vrel(r,w)
 %   to the earth's angular rotation
 %
 %   Inputs:
-%       r: Satellite altitudes [N x 1] (m)
+%       r: Satellite orbital radius [N x 1] (m)
 %       w: Satellite angular velocities [N x 1] (rad/sec)
 %   Outputs:
 %       result: satellite velocity relative to the earth's angular rotation

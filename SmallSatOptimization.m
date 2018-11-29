@@ -44,17 +44,21 @@ we = 7.2921150e-5;  % (rad/sec)
 global phi;
 phi = deg2rad(90);  % 90 degrees for near-polar orbit
 
+% Radius of the earth
+global re;
+re = 6371E3;  % (m)
+
 
 %% Simulation Parameters
 % Specified in Sin et al. paper
 
 % Number of satellites in the simulation
 global N;
-N = 40;
+N = 5;
 
 % Number of time steps/input commands
 global T;
-T = 10;  % (Days)
+T = 71;  % (Days)
 
 % Initial position
 global theta0;
@@ -64,7 +68,7 @@ theta0(:) = 0;      % Set to initial conditions
 % Initial altitude
 global r0;
 r0 = zeros(N,1);  % Preallocate for speed
-r0(:) = 475000;   % (m)
+r0(:) = 475000 + re;   % (m)
 
 % Initial velocity
 global w0;
