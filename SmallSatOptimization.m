@@ -48,6 +48,8 @@ phi = deg2rad(90);  % 90 degrees for near-polar orbit
 global re;
 re = 6371E3;  % (m)
 
+save("PhysicalConstants.mat")
+
 
 %% Simulation Parameters
 % Specified in Sin et al. paper
@@ -68,7 +70,7 @@ theta0(:) = 0;      % Set to initial conditions
 % Initial altitude
 global r0;
 r0 = zeros(N,1);  % Preallocate for speed
-r0(:) = 475000 + re;   % (m)
+r0(:) = 475000 + re;   % Convert from altitude to radius(m)
 
 % Initial velocity
 global w0;
@@ -87,6 +89,8 @@ epsTheta = deg2rad(0.1);  % (rad)
 % Velocity tolerance
 global epsOmega;
 epsOmega = 1e-18;  % (rad/sec)
+
+save("SimulationParameters.m")
 
 %% Variables for both programming methods
 
