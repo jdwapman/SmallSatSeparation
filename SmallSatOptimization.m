@@ -57,11 +57,11 @@ save("PhysicalConstants.mat")
 
 % Number of satellites in the simulation
 global N;
-N = 5;
+N = 105;
 
 % Number of time steps/input commands
 global T;
-T = 70;  % (Days)
+T = 71;  % (Days)
 
 % Initial position
 global theta0;
@@ -132,11 +132,11 @@ end
 
 
 % 3) Create  matrices for linear programming
-A = [-dt*Sr_ref, -ones(N,1); ...
-    dt^2*D*Salpha_ref, zeros(N,1); ...
-    -dt^2*D*Salpha_ref, zeros(N,1); ...
-    dt*D*Somega_ref, zeros(N,1); ...
-    -dt*D*Somega_ref, zeros(N,1); ...
+A = [-dt * Sr_ref, -ones(N,1); ...
+    dt^2 * D * Salpha_ref, zeros(N,1); ...
+    -dt^2 * D * Salpha_ref, zeros(N,1); ...
+    dt * D * Somega_ref, zeros(N,1); ...
+    -dt * D * Somega_ref, zeros(N,1); ...
     eye(N*T, N*T), zeros(N*T, 1); ...
     -eye(N*T, N*T), zeros(N*T, 1)];
 
@@ -150,7 +150,7 @@ b = [r0; ...
 
 % 4) Create cost function
 f = [zeros(1,N*T), 1];
-x0 = [repmat(Amin, N*T, 1); -100e3];
+x0 = [repmat(Amin, N*T, 1); -(100e3+re)];
 
 costfun = @(x)f*x;
 
@@ -165,7 +165,7 @@ nonlcon = [];
 options = optimoptions('fmincon', 'Display', 'iter', 'MaxFunctionEvaluations', 100*N*T, 'UseParallel', true);
 result = fmincon(costfun, x0, A, b, Aeq, beq, lb, ub, nonlcon, options);
 
-U = result(1:end-1);  % Extract inputs
+U = result(1:end-1);  % Extract area commands
 thresh = result(end);  % Extract radius
 
 U = reshape(U, N, T);
