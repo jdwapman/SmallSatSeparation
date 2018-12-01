@@ -57,11 +57,11 @@ save("PhysicalConstants.mat")
 
 % Number of satellites in the simulation
 global N;
-N = 1;
+N = 5;
 
 % Number of time steps/input commands
 global T;
-T = 5;  % (Days)
+T = 70;  % (Days)
 
 % Initial position
 global theta0;
