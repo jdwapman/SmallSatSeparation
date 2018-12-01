@@ -27,7 +27,7 @@ function [result] = Sr(r,w)
 %         result: Sr term
 %     Globals:
 %         Cd: Satellite drag coefficient [1 x 1]
-%         m: Satellite mass [N x 1] or [1 x 1] (kg)
+%         m: Satellite mass [1 x 1] (kg)
 %         ue: Earth's gravitational constant (m^3s^-2)
 
 
@@ -35,7 +35,7 @@ global Cd
 global m
 global ue
 
-result = -Cd./m .* rho(r(:)) .* abs(vrel(r(:),w(:))).^2 .* sqrt(r(:).^3/ue);
+result = -Cd/m .* rho(r) .* (abs(vrel(r,w)).^2) .* sqrt(r.^3/ue);
 
 end
 

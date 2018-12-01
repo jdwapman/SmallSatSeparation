@@ -11,6 +11,7 @@
 %% Initialization Steps
 clc
 clear
+close all
 
 %% Set Up Physical Constants
 
@@ -56,7 +57,7 @@ save("PhysicalConstants.mat")
 
 % Number of satellites in the simulation
 global N;
-N = 5;
+N = 105;
 
 % Number of time steps/input commands
 global T;
@@ -90,7 +91,7 @@ epsTheta = deg2rad(0.1);  % (rad)
 global epsOmega;
 epsOmega = 1e-18;  % (rad/sec)
 
-save("SimulationParameters.m")
+save("SimulationParameters.mat")
 
 %% Variables for both programming methods
 
