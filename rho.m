@@ -34,6 +34,10 @@ end
 
 altitude = r - re;
 
+if any(altitude < 0)
+   error("Altitude < 0") 
+end
+
 % Error checking
 if any(altitude < 100e3) % 100 km
     warning("Altitude is below minimum value of 100 km")
@@ -65,3 +69,5 @@ for rIdx = 1:numel(altitude)
     % 4) Return the density. Ignore diurnal effects.
     density(rIdx) = densityMax;
 end
+
+% density(:) = 2.5E-12; % Constant density value from Li and Mason. Useful for debugging

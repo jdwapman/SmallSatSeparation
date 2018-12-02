@@ -57,7 +57,7 @@ save("PhysicalConstants.mat")
 
 % Number of satellites in the simulation
 global N;
-N = 2;
+N = 5;
 
 % Number of time steps/input commands
 global T;
@@ -114,13 +114,15 @@ delta_des(end) = -2*pi/N*(N-1);  % Replace last value
 u = repmat(Amin, N, T);
 [rRef, wRef, thetaRef] = trajectory(u);
 
+%% Precompute
+
 % 2) Precompute Sr and Somega matrices
 Sr_ref = [];
 Somega_ref = [];
 Salpha_ref = [];
 alpha = ((T-1/2)*ones(1,T) - (0:1:T-1));
 for n = 1:1:N
-    Sr_i = Sr(rRef(n,1:T), wRef(n,1:T))'  % Must convert to row vector
+    Sr_i = Sr(rRef(n,1:T), wRef(n,1:T))';  % Must convert to row vector
     Sr_ref = blkdiag(Sr_ref, Sr_i);  % Append matrix to diagonal
     
     Somega_i = Somega(rRef(n,1:T), wRef(n,1:T))';  % Must convert to row vector
@@ -150,7 +152,7 @@ b = [r0; ...
 
 % 4) Create cost function
 f = [zeros(1,N*T), 1];
-x0 = [repmat(Amin, N*T, 1); -(100e3+re)];
+x0 = [repmat(Amax, N*T, 1); -(100e3+re)];
 
 costfun = @(x)f*x;
 
@@ -185,13 +187,16 @@ figure
 polarplot(thetaActT, rActT, '.-')
 title("Actual Final State")
 
-% Find the linearized final state
+% Find the linearized final state. NOTE: These appear to be correct
 figure
 rLinT = r0+dt*Sr_ref*result(1:end-1);
 wLinT = w0+dt*Somega_ref*result(1:end-1);
 thetaLinT = theta0+dt*T*w0+dt^2*Salpha_ref*result(1:end-1);
 polarplot(thetaLinT, rLinT)
 title("Linearized Final State")
+
+% Find the entire linear trajectory
+[rLin, wLin, thetaLin] = trajectoryLinear(U);
 
 %% Plot inputs
 

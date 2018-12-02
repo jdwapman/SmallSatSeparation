@@ -1,4 +1,4 @@
-function [r, w, theta] = trajectoryLinear(u, Sr_ref, Somega_ref, Salpha_ref)
+function [r, w, theta] = trajectoryLinear(u)
 %trajectory Computes the trajectory of the satellites over time
 %   Computes the trajectory of the N satellites over time given the inputs
 %   u.
@@ -25,24 +25,33 @@ global r0;
 global w0;
 global theta0;
 global dt;
+global Amin;
 
-% Preallocate trajectory outputs
+% 1) Precompute reference trajectory
+uRef = repmat(Amin, N, T);
+[rRef, wRef, thetaRef] = trajectory(uRef);  % Note: these are [N x T+1] to include initial state
+
+% Preallocate linear trajectory outputs
 r = zeros(N, T);
 w = zeros(N, T);
 theta = zeros(N, T);
 
-uflat = reshape(u, N*T, 1);
-
 % Iterate through all other time steps. Functions from Sin et al. paper
 for t = 1:1:T
-    r(:,t) = r0 + dt*Sr_ref(:,1:N*t)*uflat(1:N*t);
-    w(:,t) = w0 + dt*Somega_ref(:,1:N*t)*uflat(1:N*t);
-    theta(:,t) = theta0+dt*t*w0+dt^2*Salpha_ref(:,1:N*t)*uflat(1:N*t);
+
+    rSum = 0;
+    for sumT = 0:1:t-1
+       rSum = rSum + Sr(rRef(:,sumT+1), wRef(:,sumT+1)).*u(:,sumT+1);
+    end
+    
+    r(:,t) = r0 + dt*rSum;
+    
 end
 
 r = [r0 r];
-w = [w0 w];
-theta = [theta0 theta];
+
+w = 0;
+theta = 0;
 
 end
 

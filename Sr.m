@@ -35,7 +35,7 @@ global Cd
 global m
 global ue
 
-result = -(Cd/m) .* rho(r(:)) .* (abs(vrel(r(:),w(:))).^2) .* sqrt(r(:).^3/ue);
+result = -(Cd/m) .* rho(r(:)) .* (abs(vrel(r(:),w(:))).^2) .* sqrt((r(:).^3)/ue);
 
 end
 
