@@ -9,9 +9,9 @@
 % arXiv:1710.00104 [cs], Sep. 2017.
 
 %% Initialization Steps
-clc
-clear
-close all
+clc  % Clear the command line
+clear  % Remove all variables from the workspace
+close all  % Close all figures
 
 %% Set Up Physical Constants
 
@@ -152,7 +152,7 @@ b = [r0; ...
 
 % 4) Create cost function
 f = [zeros(1,N*T), 1];
-x0 = [repmat(Amin, N*T, 1); -(100e3+re)];
+x0 = [repmat(Amin, N*T, 1); -(100e3+re)];  % Initial guess
 
 costfun = @(x)f*x;
 
@@ -170,25 +170,36 @@ result = fmincon(costfun, x0, A, b, Aeq, beq, lb, ub, nonlcon, options);
 uOpt = result(1:end-1);  % Extract area commands
 thresh = result(end);  % Extract radius
 
+% IMPORTANT NOTE: We originally reshaped to N*T and neglected to perform
+% the transpose operation, which led to incorrect results. The "results"
+% vector from the optimization function is [N*T, 1] where the form is in
+% the following format in a vector
+% N = 1 [Time commands T x 1]
+% N = 2 [Time commands T x 1]
+% etc...
+% Reshaping must be first be done to T x N, then the transpose must be
+% taken so that the uOptReshape matrix is an [N x T] matrix where rows are
+% satellites and columns are commands at a given time step
+
 uOptReshape = reshape(uOpt, T, N);
 uOptReshape = uOptReshape';
 
-% rMax = -thresh;  % Determines maximized radius
-% assert(all(rMax < r0))  % Check that the radius is less than starting
+rMax = -thresh;  % Determines maximized radius
+assert(all(rMax < r0))  % Check that the radius is less than starting
 
 %% Plot Angles
 
 % Find actual trajectory and final states
 [rAct, wAct, thetaAct] = trajectory(uOptReshape);
 t = 1:1:T+1;
-rActT = rAct(:,end);
+rActT = rAct(:,end);  % Extract the final state
 wActT = wAct(:,end);
 thetaActT = thetaAct(:,end);
 figure
 polarplot(thetaActT, rActT, '.-')
 title("Actual Final State")
 
-% Find the linearized final state. NOTE: These appear to be correct
+% Find the linearized final state using equations from Sin et al.
 figure
 rLinT = r0+dt*Sr_ref*uOpt;
 wLinT = w0+dt*Somega_ref*uOpt;
@@ -210,8 +221,6 @@ loopResult = r0 + dt*rSum;
 
 uMin = reshape(uMin', N*T, 1);
 rLinTNew = r0+dt*Sr_ref* uOpt;
-
-% [rLin, wLin, thetaLin] = trajectoryLinear(U);
 
 %% Plot inputs
 
