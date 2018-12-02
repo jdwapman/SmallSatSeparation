@@ -57,7 +57,7 @@ save("PhysicalConstants.mat")
 
 % Number of satellites in the simulation
 global N;
-N = 5;
+N = 105;
 
 % Number of time steps/input commands
 global T;
@@ -111,8 +111,8 @@ delta_des(end) = -2*pi/N*(N-1);  % Replace last value
 % OptimizeLinear()
 
 % 1) Precompute reference trajectory
-u = repmat(Amin, N, T);
-[rRef, wRef, thetaRef] = trajectory(u);
+uMin = repmat(Amin, N, T);
+[rRef, wRef, thetaRef] = trajectory(uMin);
 
 %% Precompute
 
@@ -152,7 +152,7 @@ b = [r0; ...
 
 % 4) Create cost function
 f = [zeros(1,N*T), 1];
-x0 = [repmat(Amax, N*T, 1); -(100e3+re)];
+x0 = [repmat(Amin, N*T, 1); -(100e3+re)];
 
 costfun = @(x)f*x;
 
@@ -167,18 +167,19 @@ nonlcon = [];
 options = optimoptions('fmincon', 'Display', 'iter', 'MaxFunctionEvaluations', 100*N*T, 'UseParallel', true);
 result = fmincon(costfun, x0, A, b, Aeq, beq, lb, ub, nonlcon, options);
 
-Uopt = result(1:end-1);  % Extract area commands
+uOpt = result(1:end-1);  % Extract area commands
 thresh = result(end);  % Extract radius
 
-Uopt = reshape(Uopt, N, T);
+uOptReshape = reshape(uOpt, T, N);
+uOptReshape = uOptReshape';
 
-rMax = -thresh;  % Determines maximized radius
-assert(all(rMax < r0))  % Check that the radius is less than starting
+% rMax = -thresh;  % Determines maximized radius
+% assert(all(rMax < r0))  % Check that the radius is less than starting
 
 %% Plot Angles
 
 % Find actual trajectory and final states
-[rAct, wAct, thetaAct] = trajectory(Uopt);
+[rAct, wAct, thetaAct] = trajectory(uOptReshape);
 t = 1:1:T+1;
 rActT = rAct(:,end);
 wActT = wAct(:,end);
@@ -189,24 +190,26 @@ title("Actual Final State")
 
 % Find the linearized final state. NOTE: These appear to be correct
 figure
-rLinT = r0+dt*Sr_ref*result(1:end-1);
-wLinT = w0+dt*Somega_ref*result(1:end-1);
-thetaLinT = theta0+dt*T*w0+dt^2*Salpha_ref*result(1:end-1);
+rLinT = r0+dt*Sr_ref*uOpt;
+wLinT = w0+dt*Somega_ref*uOpt;
+thetaLinT = theta0+dt*T*w0+dt^2*Salpha_ref*uOpt;
 polarplot(thetaLinT, rLinT)
 title("Linearized Final State")
 
-% Find the entire linear trajectory
+%% Find the entire linear trajectory
 
-uMin = repmat(Amin, N, T);
+uMin = repmat(Amax, N, 1);
+uMin = [uMin, repmat(Amin, N, T-1)];
+
 rSum = 0;
 for k = 0:1:T-1
-   rSum = rSum + Sr(rRef(:,k+1), wRef(:,k+1)).*uMin(:,k+1);
+   rSum = rSum + Sr(rRef(:,k+1), wRef(:,k+1)).* uOptReshape(:,k+1);
 end
 
 loopResult = r0 + dt*rSum;
 
-uMin = repmat(Amin, N*T, 1);
-rLinT = r0+dt*Sr_ref*uMin;
+uMin = reshape(uMin', N*T, 1);
+rLinTNew = r0+dt*Sr_ref* uOpt;
 
 % [rLin, wLin, thetaLin] = trajectoryLinear(U);
 
@@ -214,7 +217,7 @@ rLinT = r0+dt*Sr_ref*uMin;
 
 figure
 t = 1:1:T;
-plot(t, Uopt);
+plot(t, uOptReshape);
 xlabel("Time (Days)")
 ylabel("Area (m^2)")
 title("Satellite Area vs Time")
