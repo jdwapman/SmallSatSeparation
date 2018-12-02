@@ -57,7 +57,7 @@ save("PhysicalConstants.mat")
 
 % Number of satellites in the simulation
 global N;
-N = 105;
+N = 2;
 
 % Number of time steps/input commands
 global T;
@@ -120,10 +120,10 @@ Somega_ref = [];
 Salpha_ref = [];
 alpha = ((T-1/2)*ones(1,T) - (0:1:T-1));
 for n = 1:1:N
-    Sr_i = Sr(rRef(n,:), wRef(n,:))';  % Must convert to row vector
+    Sr_i = Sr(rRef(n,1:T), wRef(n,1:T))'  % Must convert to row vector
     Sr_ref = blkdiag(Sr_ref, Sr_i);  % Append matrix to diagonal
     
-    Somega_i = Somega(rRef(n,:), wRef(n,:))';  % Must convert to row vector
+    Somega_i = Somega(rRef(n,1:T), wRef(n,1:T))';  % Must convert to row vector
     Somega_ref = blkdiag(Somega_ref, Somega_i);
     
     Salpha_i = alpha .* Somega_i;
@@ -145,8 +145,8 @@ b = [r0; ...
     epsTheta * ones(N,1) + D*(theta0 + dt*T*w0) - delta_des; ...  
     epsOmega * ones(N,1) - D*w0; ...
     epsOmega * ones(N,1) + D*w0; ...
-    Amax * ones(N*T, 1); ...
-    -Amin * ones(N*T, 1)];
+    Amax * ones(N*T,1); ...
+    -Amin * ones(N*T,1)];
 
 % 4) Create cost function
 f = [zeros(1,N*T), 1];
@@ -177,7 +177,7 @@ assert(all(rMax < r0))  % Check that the radius is less than starting
 
 % Find actual trajectory and final states
 [rAct, wAct, thetaAct] = trajectory(U);
-t = 1:1:T;
+t = 1:1:T+1;
 rActT = rAct(:,end);
 wActT = wAct(:,end);
 thetaActT = thetaAct(:,end);
@@ -205,7 +205,7 @@ title("Satellite Area vs Time")
 %% Plot radius trajectory
 
 figure
-t = 1:1:T;
+t = 1:1:T+1;
 plot(t, rAct/1000)
 xlabel("Time (Days)")
 ylabel("Altitude (km)")
