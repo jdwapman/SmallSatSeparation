@@ -1,7 +1,7 @@
-function [r, w, theta] = trajectoryLinear(u)
-%trajectory Computes the trajectory of the satellites over time
-%   Computes the trajectory of the N satellites over time given the inputs
-%   u.
+function [r, w, theta] = trajectoryLinear(u, rRef, wRef, thetaRef)
+%trajectory Computes the linearized trajectory of the satellites over time
+%   Computes the linearized trajectory of the N satellites over time
+%   given the inputs u and the reference trajectory.
 % 
 %     Inputs:
 %         u: Vector of satellite area commands [N x T] (m^2)
@@ -28,30 +28,51 @@ global dt;
 global Amin;
 
 % 1) Precompute reference trajectory
+% Note: these are [N x T+1] to include initial state
 uRef = repmat(Amin, N, T);
-[rRef, wRef, thetaRef] = trajectory(uRef);  % Note: these are [N x T+1] to include initial state
+[rRef, wRef, thetaRef] = trajectory(uRef);
 
 % Preallocate linear trajectory outputs
 r = zeros(N, T);
 w = zeros(N, T);
 theta = zeros(N, T);
 
+
 % Iterate through all other time steps. Functions from Sin et al. paper
 for t = 1:1:T
 
+    % Compute for r
     rSum = 0;
-    for sumT = 0:1:t-1
-       rSum = rSum + Sr(rRef(:,sumT+1), wRef(:,sumT+1)).*u(:,sumT+1);
+    for k = 0:1:t-1
+       rSum = rSum + Sr(rRef(:,k+1), wRef(:,k+1)).* u(:,k+1);
     end
-    
+
     r(:,t) = r0 + dt*rSum;
+    
+    % Compute for w
+    wSum = 0;
+    for k = 0:1:t-1
+       wSum = wSum + Somega(rRef(:,k+1), wRef(:,k+1)).* u(:,k+1);
+    end
+
+    w(:,t) = w0 + dt*wSum;
+    
+    % Compute for theta
+    wThetaSum = 0;
+    thetaSum = 0;
+    for k = 0:1:t-1
+       wThetaSum = wThetaSum + w(:,k+1);
+       thetaSum = thetaSum + Somega(rRef(:,k+1), wRef(:,k+1)).* u(:,k+1);
+    end
+
+    theta(:,t) = theta0 + dt*wThetaSum + 0.5*dt^2*thetaSum;
     
 end
 
+% Append initial position
 r = [r0 r];
-
-w = 0;
-theta = 0;
+w = [w0 w];
+theta = [theta0 theta];
 
 end
 

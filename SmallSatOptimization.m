@@ -207,20 +207,8 @@ thetaLinT = theta0+dt*T*w0+dt^2*Salpha_ref*uOpt;
 polarplot(thetaLinT, rLinT)
 title("Linearized Final State")
 
-%% Find the entire linear trajectory
-
-uMin = repmat(Amax, N, 1);
-uMin = [uMin, repmat(Amin, N, T-1)];
-
-rSum = 0;
-for k = 0:1:T-1
-   rSum = rSum + Sr(rRef(:,k+1), wRef(:,k+1)).* uOptReshape(:,k+1);
-end
-
-loopResult = r0 + dt*rSum;
-
-uMin = reshape(uMin', N*T, 1);
-rLinTNew = r0+dt*Sr_ref* uOpt;
+%% Use linear function
+[rLin, wLin, thetaLin] = trajectoryLinear(uOptReshape);
 
 %% Plot inputs
 
