@@ -167,10 +167,10 @@ nonlcon = [];
 options = optimoptions('fmincon', 'Display', 'iter', 'MaxFunctionEvaluations', 100*N*T, 'UseParallel', true);
 result = fmincon(costfun, x0, A, b, Aeq, beq, lb, ub, nonlcon, options);
 
-U = result(1:end-1);  % Extract area commands
+Uopt = result(1:end-1);  % Extract area commands
 thresh = result(end);  % Extract radius
 
-U = reshape(U, N, T);
+Uopt = reshape(Uopt, N, T);
 
 rMax = -thresh;  % Determines maximized radius
 assert(all(rMax < r0))  % Check that the radius is less than starting
@@ -178,7 +178,7 @@ assert(all(rMax < r0))  % Check that the radius is less than starting
 %% Plot Angles
 
 % Find actual trajectory and final states
-[rAct, wAct, thetaAct] = trajectory(U);
+[rAct, wAct, thetaAct] = trajectory(Uopt);
 t = 1:1:T+1;
 rActT = rAct(:,end);
 wActT = wAct(:,end);
@@ -196,13 +196,25 @@ polarplot(thetaLinT, rLinT)
 title("Linearized Final State")
 
 % Find the entire linear trajectory
-[rLin, wLin, thetaLin] = trajectoryLinear(U);
+
+uMin = repmat(Amin, N, T);
+rSum = 0;
+for k = 0:1:T-1
+   rSum = rSum + Sr(rRef(:,k+1), wRef(:,k+1)).*uMin(:,k+1);
+end
+
+loopResult = r0 + dt*rSum;
+
+uMin = repmat(Amin, N*T, 1);
+rLinT = r0+dt*Sr_ref*uMin;
+
+% [rLin, wLin, thetaLin] = trajectoryLinear(U);
 
 %% Plot inputs
 
 figure
 t = 1:1:T;
-plot(t, U);
+plot(t, Uopt);
 xlabel("Time (Days)")
 ylabel("Area (m^2)")
 title("Satellite Area vs Time")
