@@ -38,8 +38,6 @@ theta(:,1) = theta0;
 
 % Iterate through all other time steps. Functions from Sin et al. paper
 for t = 2:1:T+1
-    Sr(r(:,t-1), w(:,t-1))
-    
     r(:,t) = r(:,t-1) + (dt.*Sr(r(:,t-1), w(:,t-1)) .* u(:,t-1));
     w(:,t) = w(:,t-1) + (dt.*Somega(r(:,t-1), w(:,t-1)) .* u(:,t-1));
     theta(:,t) = theta(:,t-1) + dt.*w(:,t-1) + (0.5 * dt^2 ...
