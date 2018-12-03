@@ -57,11 +57,11 @@ save("PhysicalConstants.mat")
 
 % Number of satellites in the simulation
 global N;
-N = 5;
+N = 30;
 
 % Number of time steps/input commands
 global T;
-T = 71;  % (Days)
+T = 60;  % (Days)
 
 % Initial position
 global theta0;
@@ -108,126 +108,11 @@ delta_des(end) = -2*pi/N*(N-1);  % Replace last value
 
 %% Recreate using linear programming
 
-% OptimizeLinear()
+[uOptReshape, rMax] = OptimizeLinear(r0, w0, theta0);
 
-% 1) Precompute reference trajectory
-uMin = repmat(Amin, N, T);
-[rRef, wRef, thetaRef] = trajectory(uMin);
+%% Plot linear optimization results
 
-%% Precompute
-
-% 2) Precompute Sr and Somega matrices
-Sr_ref = [];
-Somega_ref = [];
-Salpha_ref = [];
-alpha = ((T-1/2)*ones(1,T) - (0:1:T-1));
-for n = 1:1:N
-    Sr_i = Sr(rRef(n,1:T), wRef(n,1:T))';  % Must convert to row vector
-    Sr_ref = blkdiag(Sr_ref, Sr_i);  % Append matrix to diagonal
-    
-    Somega_i = Somega(rRef(n,1:T), wRef(n,1:T))';  % Must convert to row vector
-    Somega_ref = blkdiag(Somega_ref, Somega_i);
-    
-    Salpha_i = alpha .* Somega_i;
-    Salpha_ref = blkdiag(Salpha_ref, Salpha_i);
-end
-
-
-% 3) Create  matrices for linear programming
-A = [-dt * Sr_ref, -ones(N,1); ...
-    dt^2 * D * Salpha_ref, zeros(N,1); ...
-    -dt^2 * D * Salpha_ref, zeros(N,1); ...
-    dt * D * Somega_ref, zeros(N,1); ...
-    -dt * D * Somega_ref, zeros(N,1); ...
-    eye(N*T, N*T), zeros(N*T, 1); ...
-    -eye(N*T, N*T), zeros(N*T, 1)];
-
-b = [r0; ...
-    epsTheta * ones(N,1) - D*(theta0 + dt*T*w0) + delta_des; ...
-    epsTheta * ones(N,1) + D*(theta0 + dt*T*w0) - delta_des; ...  
-    epsOmega * ones(N,1) - D*w0; ...
-    epsOmega * ones(N,1) + D*w0; ...
-    Amax * ones(N*T,1); ...
-    -Amin * ones(N*T,1)];
-
-% 4) Create cost function
-f = [zeros(1,N*T), 1];
-x0 = [repmat(Amin, N*T, 1); -(100e3+re)];  % Initial guess
-
-costfun = @(x)f*x;
-
-%% Optimize
-Aeq = [];
-beq = [];
-lb = [];
-ub = [];
-nonlcon = [];
-
-% Perform optimization. NOTE: for final results, disable parallelization
-options = optimoptions('fmincon', 'Display', 'iter', 'MaxFunctionEvaluations', 100*N*T, 'UseParallel', true);
-result = fmincon(costfun, x0, A, b, Aeq, beq, lb, ub, nonlcon, options);
-
-uOpt = result(1:end-1);  % Extract area commands
-thresh = result(end);  % Extract radius
-
-% IMPORTANT NOTE: We originally reshaped to N*T and neglected to perform
-% the transpose operation, which led to incorrect results. The "results"
-% vector from the optimization function is [N*T, 1] where the form is in
-% the following format in a vector
-% N = 1 [Time commands T x 1]
-% N = 2 [Time commands T x 1]
-% etc...
-% Reshaping must be first be done to T x N, then the transpose must be
-% taken so that the uOptReshape matrix is an [N x T] matrix where rows are
-% satellites and columns are commands at a given time step
-
-uOptReshape = reshape(uOpt, T, N);
-uOptReshape = uOptReshape';
-
-rMax = -thresh;  % Determines maximized radius
-assert(all(rMax < r0))  % Check that the radius is less than starting
-
-%% Plot Angles
-
-% Find actual trajectory and final states
-[rAct, wAct, thetaAct] = trajectory(uOptReshape);
-t = 1:1:T+1;
-rActT = rAct(:,end);  % Extract the final state
-wActT = wAct(:,end);
-thetaActT = thetaAct(:,end);
-figure
-polarplot(thetaActT, rActT, '.-')
-title("Actual Final State")
-
-% Find the linearized final state using equations from Sin et al.
-figure
-rLinT = r0+dt*Sr_ref*uOpt;
-wLinT = w0+dt*Somega_ref*uOpt;
-thetaLinT = theta0+dt*T*w0+dt^2*Salpha_ref*uOpt;
-polarplot(thetaLinT, rLinT)
-title("Linearized Final State")
-
-%% Plot inputs
-
-figure
-t = 1:1:T;
-plot(t, uOptReshape);
-xlabel("Time (Days)")
-ylabel("Area (m^2)")
-title("Satellite Area vs Time")
-
-%% Plot radius trajectory
-
-figure
-t = 1:1:T+1;
-plot(t, rAct/1000)
-xlabel("Time (Days)")
-ylabel("Altitude (km)")
-
-figure
-plot(t, wAct)
-xlabel("Time (Days)")
-ylabel("Angular Velocity (rad/sec)")
+% plotLinear(uOptReshape, rMax);
 
 %% Recreate using nonlinear optimization
 OptimizeNonlinear()

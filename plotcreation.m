@@ -1,6 +1,6 @@
 close all
 
-%%  color map with red and blue on the edges
+%% Color map with red and blue on the edges
 
 C = distinguishable_colors(N);
 
