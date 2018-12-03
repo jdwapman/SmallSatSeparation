@@ -109,10 +109,11 @@ delta_des(end) = -2*pi/N*(N-1);  % Replace last value
 %% Recreate using open-loop linear programming
 
 [commands, rMax] = OptimizeLinear();
+rOpenLoop = rMax;
 
 %% Plot linear optimization results
 
-plotLinear(commands, rMax);
+plotLinear(commands, rOpenLoop);
 
 %% Recreate using closed-loop linear programming (model-predictive control)
 
@@ -157,10 +158,13 @@ r0 = r(:,1);
 w0 = w(:,1);
 theta0 = theta(:,1);
 
+rMax = min(r(:,end));
+rClosedLoop = rMax;
+
 
 %% Plot
 
-plotLinear(u, rMax);
+plotLinear(u, rClosedLoop);
 
 %% Recreate using nonlinear optimization
 OptimizeNonlinear()
