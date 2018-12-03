@@ -13,7 +13,7 @@ global D
 
 %% Plot final angles
 
-t = 1:1:T+1;
+t = 0:1:T;
 rActT = rAct(:,end);  % Extract the final state
 wActT = wAct(:,end);
 thetaActT = thetaAct(:,end);
@@ -24,7 +24,7 @@ title("Actual Final State")
 %% Plot input commands
 
 figure
-t = 1:1:T;
+t = 0:1:T-1;
 plot(t, uOptReshape);
 xlabel("Time (Days)")
 ylabel("Area (m^2)")
@@ -33,7 +33,7 @@ title("Satellite Area vs Time")
 %% Plot radius trajectory
 
 figure
-t = 1:1:T+1;
+t = 0:1:T;
 plot(t, rAct/1000)
 xlabel("Time (Days)")
 ylabel("Altitude (km)")
@@ -47,7 +47,7 @@ title("Angular Velocity vs Time")
 
 %% Plot angle separation
 figure
-t = 1:1:T+1;
+t = 0:1:T;
 spacing = rad2deg(D*thetaAct);
 plot(t, spacing(1:end-1, :));
 xlabel("Time (Days)")

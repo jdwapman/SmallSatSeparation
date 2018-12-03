@@ -57,11 +57,11 @@ save("PhysicalConstants.mat")
 
 % Number of satellites in the simulation
 global N;
-N = 30;
+N = 10;
 
 % Number of time steps/input commands
 global T;
-T = 60;  % (Days)
+T = 40;  % (Days)
 
 % Initial position
 global theta0;
@@ -108,13 +108,59 @@ delta_des(end) = -2*pi/N*(N-1);  % Replace last value
 
 %% Recreate using open-loop linear programming
 
-[uOptReshape, rMax] = OptimizeLinear(T, r0, w0, theta0);
+[commands, rMax] = OptimizeLinear();
 
 %% Plot linear optimization results
 
-% plotLinear(uOptReshape, rMax);
+plotLinear(commands, rMax);
 
-%% Recreate using closed-loop linear programming
+%% Recreate using closed-loop linear programming (model-predictive control)
+
+% Preallocate matrices
+r = zeros(N, T+1);
+w = zeros(N, T+1);
+theta = zeros(N, T+1);
+u = zeros(N, T);
+
+% Set first time step to initial conditions
+r(:,1) = r0;
+w(:,1) = w0;
+theta(:,1) = theta0;
+
+fullHorizon = T+1;
+for t = 1:1:fullHorizon-1
+    
+    % Execute optimization problem using the last state as the initial
+    % conditions. Also, shrink the T horizon
+    T = fullHorizon - t;
+    
+    disp(T)
+    
+    r0 = r(:,t);
+    w0 = w(:,t);
+    theta0 = theta(:,t);
+    [commands, rMax] = OptimizeLinear();
+    [rCalc, wCalc, thetaCalc] = trajectory(commands);
+    
+    % Position 1 stores initial conditions. Take position 2 for the next
+    % step
+    r(:,t+1) = rCalc(:,2); 
+    w(:,t+1) = wCalc(:,2);
+    theta(:,t+1) = thetaCalc(:,2); 
+    
+    u(:,t) = commands(:,1);
+end
+
+% Restore original values
+T = fullHorizon - 1;
+r0 = r(:,1);
+w0 = w(:,1);
+theta0 = theta(:,1);
+
+
+%% Plot
+
+plotLinear(u, rMax);
 
 %% Recreate using nonlinear optimization
 OptimizeNonlinear()
