@@ -93,7 +93,7 @@ epsOmega = 1e-18;  % (rad/sec)
 
 save("SimulationParameters.mat")
 
-%% Variables for both programming methods
+%% Variables for all programming methods
 
 % Creates D matrix used for satellite spacing
 global D;
@@ -106,13 +106,15 @@ global delta_des;
 delta_des = repmat(2*pi/N, N, 1);
 delta_des(end) = -2*pi/N*(N-1);  % Replace last value
 
-%% Recreate using linear programming
+%% Recreate using open-loop linear programming
 
 [uOptReshape, rMax] = OptimizeLinear(r0, w0, theta0);
 
 %% Plot linear optimization results
 
 % plotLinear(uOptReshape, rMax);
+
+%% Recreate using closed-loop linear programming
 
 %% Recreate using nonlinear optimization
 OptimizeNonlinear()

@@ -8,10 +8,11 @@ global N
 global T
 global D
 
-%% Plot Angles
-
-% Find actual trajectory and final states
+%% Find actual trajectory and final states
 [rAct, wAct, thetaAct] = trajectory(uOptReshape);
+
+%% Plot final angles
+
 t = 1:1:T+1;
 rActT = rAct(:,end);  % Extract the final state
 wActT = wAct(:,end);
@@ -20,7 +21,7 @@ figure
 polarplot(thetaActT, rActT, '.-')
 title("Actual Final State")
 
-%% Plot inputs
+%% Plot input commands
 
 figure
 t = 1:1:T;
