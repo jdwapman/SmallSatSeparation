@@ -57,7 +57,7 @@ save("PhysicalConstants.mat")
 
 % Number of satellites in the simulation
 global N;
-N = 105;
+N = 5;
 
 % Number of time steps/input commands
 global T;
@@ -206,9 +206,6 @@ wLinT = w0+dt*Somega_ref*uOpt;
 thetaLinT = theta0+dt*T*w0+dt^2*Salpha_ref*uOpt;
 polarplot(thetaLinT, rLinT)
 title("Linearized Final State")
-
-%% Use linear function
-[rLin, wLin, thetaLin] = trajectoryLinear(uOptReshape);
 
 %% Plot inputs
 

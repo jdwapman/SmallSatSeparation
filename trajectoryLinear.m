@@ -56,7 +56,12 @@ for t = 1:1:T
     end
 
     w(:,t) = w0 + dt*wSum;
+   
     
+end
+
+% NOTE: NOT ACCURATE
+for t = 1:1:T
     % Compute for theta
     wThetaSum = 0;
     thetaSum = 0;
@@ -65,8 +70,7 @@ for t = 1:1:T
        thetaSum = thetaSum + Somega(rRef(:,k+1), wRef(:,k+1)).* u(:,k+1);
     end
 
-    theta(:,t) = theta0 + dt*wThetaSum + 0.5*dt^2*thetaSum;
-    
+    theta(:,t) = theta0 + dt*wThetaSum + 0.5*(dt^2)*thetaSum;
 end
 
 % Append initial position
