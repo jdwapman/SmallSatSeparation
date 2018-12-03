@@ -57,11 +57,11 @@ save("PhysicalConstants.mat")
 
 % Number of satellites in the simulation
 global N;
-N = 10;
+N = 105;
 
 % Number of time steps/input commands
 global T;
-T = 40;  % (Days)
+T = 71;  % (Days)
 
 % Initial position
 global theta0;
@@ -108,14 +108,23 @@ delta_des(end) = -2*pi/N*(N-1);  % Replace last value
 
 %% Recreate using open-loop linear programming
 
+% Start timing
+tic
+
 [commands, rMax] = OptimizeLinear();
 rOpenLoop = rMax;
+
+% Stop timing
+toc
 
 %% Plot linear optimization results
 
 plotLinear(commands, rOpenLoop);
 
 %% Recreate using closed-loop linear programming (model-predictive control)
+
+% Start timing
+tic
 
 % Preallocate matrices
 r = zeros(N, T+1);
@@ -160,6 +169,9 @@ theta0 = theta(:,1);
 
 rMax = min(r(:,end));
 rClosedLoop = rMax;
+
+% Stop timing
+toc
 
 
 %% Plot
