@@ -2,16 +2,23 @@ function [uOptReshape, rMax] = OptimizeLinear()
 %OptimizeLinear Performs linear optimization of the constellation
 %separation problem
 %   Performs linear optimization of the constellation separation problem
+%
+%   Inputs:
+%       None
+%   Outputs:
+%       uOptReshape: Satellite area commands for N satellites across T time
+%           steps [N x T] (m^2)
+%       rMax: The maximized minimum satellite radius (m)
+%   Globals:
+%       Almost all globals are imported from the SmallSatOptimization
+%       function. For definitions, refer to that file. In general it is not
+%       ideal to use global functions, but due to the nature of Matlab's
+%       nonlinear constraints functions in fmincon (the function must be
+%       called many times and arguments cannot be passed to it), all
+%       physical and simulation parameters must be in the global
+%       workspace. Writing to and reading from a file is too slow.
 
 %% Import global variables
-
-% IMPORTANT NOTE: DO NOT IMPORT THE GLOBAL T, r0, w0, or theta0 variables.
-% Since this optimization function is used for the closed-loop
-% model-predictive control version, the starting variables may change from
-% iteration to iteration. Instead, initial conditions should be passed to
-% the function as rStart, wStart, and thetaStart. Additionally, T (the time
-% horizon) will change from iteration to iteration when performing model
-% predictive control
 
 global Amin;
 global Amax;

@@ -173,7 +173,6 @@ rClosedLoop = rMax;
 % Stop timing
 toc
 
-
 %% Plot
 
 plotLinear(u, rClosedLoop);
