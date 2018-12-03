@@ -1,20 +1,21 @@
-function [uOptReshape, rMax] = OptimizeLinear(rStart, wStart, thetaStart)
+function [uOptReshape, rMax] = OptimizeLinear(T, rStart, wStart, thetaStart)
 %OptimizeLinear Performs linear optimization of the constellation
 %separation problem
 %   Performs linear optimization of the constellation separation problem
 
 %% Import global variables
 
-% IMPORTANT NOTE: DO NOT IMPORT THE GLOBAL r0, w0, or theta0 variables.
+% IMPORTANT NOTE: DO NOT IMPORT THE GLOBAL T, r0, w0, or theta0 variables.
 % Since this optimization function is used for the closed-loop
 % model-predictive control version, the starting variables may change from
 % iteration to iteration. Instead, initial conditions should be passed to
-% the function as rStart, wStart, and thetaStart.
+% the function as rStart, wStart, and thetaStart. Additionally, T (the time
+% horizon) will change from iteration to iteration when performing model
+% predictive control
 
 global Amin;
 global Amax;
 global N;
-global T;
 global dt;
 global D;
 global delta_des;
