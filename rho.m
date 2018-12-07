@@ -67,7 +67,7 @@ for rIdx = 1:numel(altitude)
     densityMax = rhoMax(i)*exp((h(i)-altitude(rIdx))/HM);
     
     % 4) Return the density. Ignore diurnal effects.
-    density(rIdx) = densityMax;
+    density(rIdx) = densityMin;
 end
 
 % density(:) = 2.5E-12; % Constant density value from Li and Mason. Useful for debugging
