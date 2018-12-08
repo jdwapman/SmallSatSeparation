@@ -56,11 +56,11 @@ save("PhysicalConstants.mat")
 
 % Number of satellites in the simulation
 global N;
-N = 10;
+N = 4;
 
 % Number of time steps/input commands
 global T;
-T = 71;  % (Days)
+T = 35;  % (Days)
 
 % Initial position
 global theta0;
@@ -89,6 +89,10 @@ epsTheta = deg2rad(0.1);  % (rad)
 % Velocity tolerance
 global epsOmega;
 epsOmega = 1e-18;  % (rad/sec)
+
+% Atmospheric density settings
+global densitySetting;
+densitySetting = "high";
 
 save("SimulationParameters.mat")
 
@@ -155,6 +159,12 @@ if nonlinear
     [commandsNonlinearOpenLoop, rNonlinearOpenLoop] = OptimizeNonlinear();
 
     tNonlinearOpenLoop = toc;
+end
+
+%% Plot Nonlinear open-loop optimization
+
+if nonlinear
+    plotLinear(commandsNonlinearOpenLoop, rNonlinearOpenLoop)
 end
 
 %% Nonlinear closed-loop optimization

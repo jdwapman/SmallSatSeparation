@@ -22,7 +22,7 @@ function [uOptReshape, rMax] = OptimizeNonlinear()
 
     %% Create cost function
     f = [zeros(1,N*T), 1];
-    x0 = [repmat(Amin+0.01, N*T, 1); -(100e3+re)];  % Initial guess
+    x0 = [repmat(Amin+0.01, N*T, 1); -(475e3+re)];  % Initial guess
 
     costfun = @(x)f*x;
     

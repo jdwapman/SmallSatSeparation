@@ -18,6 +18,7 @@ persistent rhoMin  % (kg/m^3)
 persistent rhoMax  % (kg/m^3)
 
 global re;  % Radius of the earth (m)
+global densitySetting;  % [low, high]. Used to choose density setting
 
 % Check if density data has already been allocated
 if isempty(h)
@@ -67,7 +68,13 @@ for rIdx = 1:numel(altitude)
     densityMax = rhoMax(i)*exp((h(i)-altitude(rIdx))/HM);
     
     % 4) Return the density. Ignore diurnal effects.
-    density(rIdx) = densityMin;
+    if strcmp(densitySetting, 'low')
+        density(rIdx) = densityMin;
+    elseif strcmp(densitySetting, 'high')
+        density(rIdx) = densityMax;
+    else
+        error("Unknown density setting. Choose from [low, high]");
+    end
 end
 
 % density(:) = 2.5E-12; % Constant density value from Li and Mason. Useful for debugging
