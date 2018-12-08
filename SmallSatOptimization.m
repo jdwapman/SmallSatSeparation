@@ -51,13 +51,12 @@ re = 6371E3;  % (m)
 
 save("PhysicalConstants.mat")
 
-
 %% Simulation Parameters
 % Specified in Sin et al. paper
 
 % Number of satellites in the simulation
 global N;
-N = 20;
+N = 10;
 
 % Number of time steps/input commands
 global T;
@@ -106,76 +105,66 @@ global delta_des;
 delta_des = repmat(2*pi/N, N, 1);
 delta_des(end) = -2*pi/N*(N-1);  % Replace last value
 
+%% Choose modes to calculate
+linear = false;
+linearMPC = true;
+nonlinear = false;
+nonlinearMPC = false;
+
 %% Recreate using open-loop linear programming
 
-% Start timing
-tic
+if linear
+    % Start timing
+    tic
 
-[commands, rMax] = OptimizeLinear();
-rOpenLoop = rMax;
+    [commandsLinearOpenLoop, rLinearOpenLoop] = OptimizeLinear();
 
-% Stop timing
-toc
+    % Stop timing
+    tLinearOpenLoop = toc;
+end
 
 %% Plot linear optimization results
 
-plotLinear(commands, rOpenLoop);
+if linear
+    plotLinear(commandsLinearOpenLoop, rLinearOpenLoop);
+end
 
 %% Recreate using closed-loop linear programming (model-predictive control)
 
-% Start timing
-tic
+if linearMPC
+    % Start timing
+    tic
 
-% Preallocate matrices
-r = zeros(N, T+1);
-w = zeros(N, T+1);
-theta = zeros(N, T+1);
-u = zeros(N, T);
+    [commandsLinearClosedLoop, rLinearClosedLoop] = OptimizeMPC('linear');
 
-% Set first time step to initial conditions
-r(:,1) = r0;
-w(:,1) = w0;
-theta(:,1) = theta0;
-
-fullHorizon = T+1;
-for t = 1:1:fullHorizon-1
-    
-    % Execute optimization problem using the last state as the initial
-    % conditions. Also, shrink the T horizon
-    T = fullHorizon - t;
-    
-    disp(T)
-    
-    r0 = r(:,t);
-    w0 = w(:,t);
-    theta0 = theta(:,t);
-    [commands, rMax] = OptimizeLinear();
-    [rCalc, wCalc, thetaCalc] = trajectory(commands);
-    
-    % Position 1 stores initial conditions. Take position 2 for the next
-    % step
-    r(:,t+1) = rCalc(:,2); 
-    w(:,t+1) = wCalc(:,2);
-    theta(:,t+1) = thetaCalc(:,2); 
-    
-    u(:,t) = commands(:,1);
+    % Stop timing
+    tLinearClosedLoop = toc;
 end
-
-% Restore original values
-T = fullHorizon - 1;
-r0 = r(:,1);
-w0 = w(:,1);
-theta0 = theta(:,1);
-
-rMax = min(r(:,end));
-rClosedLoop = rMax;
-
-% Stop timing
-toc
 
 %% Plot
 
-plotLinear(u, rClosedLoop);
+if linearMPC
+    plotLinear(commandsLinearClosedLoop, rLinearClosedLoop);
+end
+%% Nonlinear open-loop optimization
 
-%% Recreate using nonlinear optimization
-OptimizeNonlinear()
+if nonlinear
+    % Start timing
+    tic
+
+    [commandsNonlinearOpenLoop, rNonlinearOpenLoop] = OptimizeNonlinear();
+
+    tNonlinearOpenLoop = toc;
+end
+
+%% Nonlinear closed-loop optimization
+
+if nonlinearMPC
+    tic
+
+    [commandsNonlinearClosedLoop, rNonlinearClosedLoop] = OptimizeMPC('nonlinear');
+
+    tNonlinearClosedLoop = toc;
+end
+
+%% Save results to file

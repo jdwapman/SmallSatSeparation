@@ -33,6 +33,7 @@ theta = zeros(N, T+1);
 
 % Set column 1 to initial conditions
 r(:,1) = r0;
+
 w(:,1) = w0;
 theta(:,1) = theta0;
 
