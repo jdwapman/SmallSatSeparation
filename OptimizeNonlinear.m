@@ -43,9 +43,9 @@ function [uOptReshape, rMax] = OptimizeNonlinear()
         thetaT = theta(:,end);
         
         %Compute constraints on r, theta, and w
-        rConst = max(-rT) - t;
-        thetaConst = max(D*thetaT - delta_des) - epsTheta;
-        wConst = max(D*wT) - epsOmega;
+        rConst = -rT - t*ones(N,1);
+        thetaConst = max(abs(D*thetaT - delta_des)) - epsTheta;
+        wConst = max(abs(D*wT)) - epsOmega;
         
         c = [rConst; thetaConst; wConst];
         ceq = [];
