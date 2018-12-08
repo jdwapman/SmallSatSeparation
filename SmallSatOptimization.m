@@ -107,8 +107,8 @@ delta_des(end) = -2*pi/N*(N-1);  % Replace last value
 
 %% Choose modes to calculate
 linear = false;
-linearMPC = true;
-nonlinear = false;
+linearMPC = false;
+nonlinear = true;
 nonlinearMPC = false;
 
 %% Recreate using open-loop linear programming
