@@ -178,3 +178,7 @@ if nonlinearMPC
 end
 
 %% Save results to file
+
+filename = ['SimulationResults', 'N', string(N), 'T', string(T), '.mat'];
+filename = strjoin(filename, '');
+save(filename);
