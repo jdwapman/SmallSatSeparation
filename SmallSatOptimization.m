@@ -49,18 +49,18 @@ phi = deg2rad(90);  % 90 degrees for near-polar orbit
 global re;
 re = 6371E3;  % (m)
 
-save("PhysicalConstants.mat")
+save("Results/PhysicalConstants.mat")
 
 %% Simulation Parameters
 % Specified in Sin et al. paper
 
 % Number of satellites in the simulation
 global N;
-N = 4;
+N = 5;
 
 % Number of time steps/input commands
 global T;
-T = 35;  % (Days)
+T = 71;  % (Days)
 
 % Initial position
 global theta0;
@@ -92,9 +92,9 @@ epsOmega = 1e-18;  % (rad/sec)
 
 % Atmospheric density settings
 global densitySetting;
-densitySetting = "high";
+densitySetting = "low";
 
-save("SimulationParameters.mat")
+save("Results/SimulationParameters.mat")
 
 %% Variables for all programming methods
 
@@ -110,10 +110,10 @@ delta_des = repmat(2*pi/N, N, 1);
 delta_des(end) = -2*pi/N*(N-1);  % Replace last value
 
 %% Choose modes to calculate
-linear = false;
-linearMPC = false;
-nonlinear = true;
-nonlinearMPC = false;
+linear = 1;
+linearMPC = 0;
+nonlinear = 0;
+nonlinearMPC = 0;
 
 %% Recreate using open-loop linear programming
 
@@ -125,6 +125,11 @@ if linear
 
     % Stop timing
     tLinearOpenLoop = toc;
+    
+    
+    filename = ['Results/Linear', 'N', string(N), 'T', string(T), '.mat'];
+    filename = strjoin(filename, '');
+    save(filename);
 end
 
 %% Plot linear optimization results
@@ -143,6 +148,10 @@ if linearMPC
 
     % Stop timing
     tLinearClosedLoop = toc;
+    
+    filename = ['Results/LinearMPC', 'N', string(N), 'T', string(T), '.mat'];
+    filename = strjoin(filename, '');
+    save(filename);
 end
 
 %% Plot
@@ -159,6 +168,10 @@ if nonlinear
     [commandsNonlinearOpenLoop, rNonlinearOpenLoop] = OptimizeNonlinear();
 
     tNonlinearOpenLoop = toc;
+    
+    filename = ['Results/NonlinearOpenLoop', 'N', string(N), 'T', string(T), '.mat'];
+    filename = strjoin(filename, '');
+    save(filename);
 end
 
 %% Plot Nonlinear open-loop optimization
@@ -175,10 +188,8 @@ if nonlinearMPC
     [commandsNonlinearClosedLoop, rNonlinearClosedLoop] = OptimizeMPC('nonlinear');
 
     tNonlinearClosedLoop = toc;
+    
+    filename = ['Results/NonlinearMPC', 'N', string(N), 'T', string(T), '.mat'];
+    filename = strjoin(filename, '');
+    save(filename);
 end
-
-%% Save results to file
-
-filename = ['SimulationResults', 'N', string(N), 'T', string(T), '.mat'];
-filename = strjoin(filename, '');
-save(filename);
