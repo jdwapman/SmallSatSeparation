@@ -130,7 +130,7 @@ end
 %% Plot linear optimization results
 
 if linear
-    plotLinear(commandsLinearOpenLoop, rLinearOpenLoop);
+    plotSatellites(commandsLinearOpenLoop, rLinearOpenLoop);
 end
 
 %% Recreate using closed-loop linear programming (model-predictive control)
@@ -148,7 +148,7 @@ end
 %% Plot
 
 if linearMPC
-    plotLinear(commandsLinearClosedLoop, rLinearClosedLoop);
+    plotSatellites(commandsLinearClosedLoop, rLinearClosedLoop);
 end
 %% Nonlinear open-loop optimization
 
@@ -164,7 +164,7 @@ end
 %% Plot Nonlinear open-loop optimization
 
 if nonlinear
-    plotLinear(commandsNonlinearOpenLoop, rNonlinearOpenLoop)
+    plotSatellites(commandsNonlinearOpenLoop, rNonlinearOpenLoop)
 end
 
 %% Nonlinear closed-loop optimization

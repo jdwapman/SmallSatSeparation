@@ -1,4 +1,4 @@
-function [] = plotLinear(uOptReshape, rMax)
+function [] = plotSatellites(uOptReshape, rMax)
 %UNTITLED Summary of this function goes here
 %   Detailed explanation goes here
 
