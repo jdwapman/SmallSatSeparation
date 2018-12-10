@@ -87,7 +87,7 @@ nonlcon = [];
 %% Optimize
 
 % Perform optimization. NOTE: for final results, disable parallelization
-options = optimoptions('fmincon', 'Display', 'iter', 'MaxFunctionEvaluations', 100*N*T, 'UseParallel', false);
+options = optimoptions('fmincon', 'Display', 'iter', 'MaxFunctionEvaluations', 1000*N*T, 'UseParallel', false);
 result = fmincon(costfun, x0, A, b, Aeq, beq, lb, ub, nonlcon, options);
 
 uOpt = result(1:end-1);  % Extract area commands
