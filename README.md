@@ -6,6 +6,8 @@ by Sin et al. and 2) modifies the optimization problem to include nonlinear
 constraints with the goal of evaluating the performance and computational
 complexity of the two optimization methods.
 
-E. Sin, M. Arcak, and A. Packard, ìSmall Satellite Constellation Separation
-using Linear Programming based Differential Drag Commands,î
+To run this program, execute the SmallSatOptimiation.m file in MATLAB.
+
+E. Sin, M. Arcak, and A. Packard, ‚ÄúSmall Satellite Constellation Separation
+using Linear Programming based Differential Drag Commands,‚Äù
 arXiv:1710.00104 [cs], Sep. 2017.
